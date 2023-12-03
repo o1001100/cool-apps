@@ -46,9 +46,17 @@ UART_TerminalApp* uart_terminal_app_alloc() {
         UART_TerminalAppViewVarItemList,
         variable_item_list_get_view(app->var_item_list));
 
-    for(int i = 0; i < NUM_MENU_ITEMS; ++i) {
+    for(int i = 0; i < START_MENU_ITEMS; ++i) {
         app->selected_option_index[i] = 0;
     }
+
+    for(int i = 0; i < SETUP_MENU_ITEMS; ++i) {
+        app->setup_selected_option_index[i] = 0;
+    }
+
+    app->widget = widget_alloc();
+    view_dispatcher_add_view(
+        app->view_dispatcher, UART_TerminalAppViewHelp, widget_get_view(app->widget));
 
     app->text_box = text_box_alloc();
     view_dispatcher_add_view(
@@ -60,6 +68,14 @@ UART_TerminalApp* uart_terminal_app_alloc() {
     view_dispatcher_add_view(
         app->view_dispatcher, UART_TerminalAppViewTextInput, text_input_get_view(app->text_input));
 
+    app->hex_input = uart_hex_input_alloc();
+    view_dispatcher_add_view(
+        app->view_dispatcher,
+        UART_TerminalAppViewHexInput,
+        uart_hex_input_get_view(app->hex_input));
+
+    app->setup_selected_option_index[BAUDRATE_ITEM_IDX] = DEFAULT_BAUDRATE_OPT_IDX;
+
     scene_manager_next_scene(app->scene_manager, UART_TerminalSceneStart);
 
     return app;
@@ -70,11 +86,17 @@ void uart_terminal_app_free(UART_TerminalApp* app) {
 
     // Views
     view_dispatcher_remove_view(app->view_dispatcher, UART_TerminalAppViewVarItemList);
+    view_dispatcher_remove_view(app->view_dispatcher, UART_TerminalAppViewHelp);
     view_dispatcher_remove_view(app->view_dispatcher, UART_TerminalAppViewConsoleOutput);
     view_dispatcher_remove_view(app->view_dispatcher, UART_TerminalAppViewTextInput);
+    view_dispatcher_remove_view(app->view_dispatcher, UART_TerminalAppViewHexInput);
+
+    variable_item_list_free(app->var_item_list);
+    widget_free(app->widget);
     text_box_free(app->text_box);
     furi_string_free(app->text_box_store);
     text_input_free(app->text_input);
+    uart_hex_input_free(app->hex_input);
 
     // View dispatcher
     view_dispatcher_free(app->view_dispatcher);
