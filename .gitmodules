@@ -1,6 +1,3 @@
 [submodule "flipperscope"]
 	path = flipperscope
 	url = https://github.com/anfractuosity/flipperscope
-[submodule "flipperzero-tpms"]
-	path = flipperzero-tpms
-	url = https://github.com/wosk/flipperzero-tpms
