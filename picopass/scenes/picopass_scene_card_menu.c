@@ -23,8 +23,9 @@ void picopass_scene_card_menu_on_enter(void* context) {
     PicopassBlock* AA1 = picopass->dev->dev_data.AA1;
 
     bool sio = 0x30 == AA1[PICOPASS_ICLASS_PACS_CFG_BLOCK_INDEX].data[0];
+    bool no_key = picopass_is_memset(pacs->key, 0x00, PICOPASS_BLOCK_LEN);
 
-    if(pacs->se_enabled) {
+    if(no_key) {
         if(sio) {
             submenu_add_item(
                 submenu,
@@ -105,7 +106,7 @@ bool picopass_scene_card_menu_on_event(void* context, SceneManagerEvent event) {
             scene_manager_set_scene_state(
                 picopass->scene_manager, PicopassSceneCardMenu, SubmenuIndexSave);
             scene_manager_next_scene(picopass->scene_manager, PicopassSceneSaveName);
-            picopass->dev->format = PicopassDeviceSaveFormatHF;
+            picopass->dev->format = PicopassDeviceSaveFormatPartial;
             consumed = true;
         } else if(event.event == SubmenuIndexSaveAsSeader) {
             scene_manager_set_scene_state(
