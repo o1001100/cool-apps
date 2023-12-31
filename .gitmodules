@@ -1,3 +1,6 @@
 [submodule "flipperscope"]
 	path = flipperscope
 	url = https://github.com/anfractuosity/flipperscope
+[submodule "xremote"]
+	path = xremote
+	url = https://github.com/kala13x/flipper-xremote
